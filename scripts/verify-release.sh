@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-VERSION="${1:-2026.06.12.1}"
+VERSION="${1:-2026.08.21.1}"
 ROOT="$(cd "$(dirname "$0")/.." && pwd)"
 SITE_WEB_DIR="${SITE_WEB_DIR:-$ROOT/../../promo_work/hermes-zh-cn/web}"
 
@@ -14,8 +14,16 @@ need() {
 
 need bash
 need python3
-need shasum
 need unzip
+
+if command -v shasum >/dev/null 2>&1; then
+  sha256() { shasum -a 256 "$@"; }
+elif command -v sha256sum >/dev/null 2>&1; then
+  sha256() { sha256sum "$@"; }
+else
+  printf '%s\n' 'missing command: shasum or sha256sum' >&2
+  exit 1
+fi
 
 cd "$ROOT"
 
@@ -56,12 +64,12 @@ if not match:
     raise SystemExit("embedded payload not found")
 payload = base64.b64decode("".join(line.strip() for line in match.group(1).splitlines()))
 
-with tempfile.NamedTemporaryFile(suffix=".tar.gz") as handle:
-    handle.write(payload)
-    handle.flush()
-    with tarfile.open(handle.name, "r:gz") as tar:
-        manifest = json.load(tar.extractfile("packages/0.16.x/zh-CN/manifest.json"))
-        package = tar.extractfile("packages/0.16.x/zh-CN/zh-cn.min.json").read()
+with tempfile.TemporaryDirectory() as directory:
+    payload_path = Path(directory) / "payload.tar.gz"
+    payload_path.write_bytes(payload)
+    with tarfile.open(payload_path, "r:gz") as tar:
+        manifest = json.load(tar.extractfile("packages/0.20.x/zh-CN/manifest.json"))
+        package = tar.extractfile("packages/0.20.x/zh-CN/zh-cn.min.json").read()
 if manifest["version"] != version:
     raise SystemExit("embedded manifest version mismatch")
 if hashlib.sha256(package).hexdigest() != manifest["files"][0]["sha256"]:
@@ -114,7 +122,7 @@ if [ -d "$SITE_WEB_DIR" ]; then
     "$SITE_WEB_DIR/platforms.json" \
     "$SITE_WEB_DIR/api/resolve" \
     "$SITE_WEB_DIR/api/resolve.sample.json" \
-    "$SITE_WEB_DIR/packages/0.16.x/zh-CN/manifest.json"; do
+    "$SITE_WEB_DIR/packages/0.20.x/zh-CN/manifest.json"; do
     python3 -m json.tool "$file" >/dev/null
   done
   bash -n "$SITE_WEB_DIR/install.sh"
@@ -128,7 +136,7 @@ from pathlib import Path
 
 version, site = sys.argv[1], Path(sys.argv[2])
 latest = json.loads((site / "latest.json").read_text(encoding="utf-8"))
-manifest = json.loads((site / "packages/0.16.x/zh-CN/manifest.json").read_text(encoding="utf-8"))
+manifest = json.loads((site / "packages/0.20.x/zh-CN/manifest.json").read_text(encoding="utf-8"))
 if latest["latest"] != version:
     raise SystemExit("site latest version mismatch")
 if manifest["version"] != version:
@@ -143,5 +151,5 @@ print("site files ok")
 PY
 fi
 
-shasum -a 256 Hermes-zh-CN-Setup.exe hermes-macos-installer.zip
+sha256 Hermes-zh-CN-Setup.exe hermes-macos-installer.zip
 printf 'release verification passed: %s\n' "$VERSION"
