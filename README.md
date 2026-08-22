@@ -2,41 +2,19 @@
 
 面向 Hermes Desktop、Hermes Agent TUI 和 CLI 的中文增强入口。
 
-官网入口：<http://47.121.138.43/hermes/>
+官网入口：[https://useai.live/hermes](https://useai.live/hermes)
 
-## 新手安装
+## 安装
 
-Windows：
-
-下载并运行：<http://47.121.138.43/hermes/Hermes-zh-CN-Setup.exe>
-
-macOS：
-
-下载并解压：<http://47.121.138.43/hermes/hermes-macos-installer.zip>
-
-然后打开 `install.command`。
-
-## 命令行安装
-
-Windows PowerShell：
-
-```powershell
-irm http://47.121.138.43/hermes/install.ps1 | iex
-```
-
-macOS / Linux / WSL2：
-
-```bash
-curl -fsSL http://47.121.138.43/hermes/install.sh | bash -s -- --include-desktop
-```
+请从官网页面选择系统并按引导安装。GitHub 仓库仅用于查看源码、更新记录和问题追踪，不提供直接下载入口。
 
 ## 平台策略
 
 | 平台 | 推荐方式 | 说明 |
 | --- | --- | --- |
-| Windows | `Hermes-zh-CN-Setup.exe` | 补官方桌面端，再调用中文增强安装器 |
-| macOS | `hermes-macos-installer.zip` | 生成官方 Hermes.app，再补中文增强 |
-| Linux | Bash | 生成官方桌面端，再补中文增强 |
+| Windows | 官网引导 | 补官方桌面端，再调用中文增强安装器 |
+| macOS | 官网引导 | 生成官方 Hermes.app，再补中文增强 |
+| Linux | 官网引导 | 生成官方桌面端，再补中文增强 |
 
 ## 翻译范围
 

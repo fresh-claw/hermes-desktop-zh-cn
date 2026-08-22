@@ -6,7 +6,7 @@ const http = require("http");
 const readline = require("readline");
 const { spawnSync } = require("child_process");
 
-const DEFAULT_BASE_URL = "http://47.121.138.43/hermes";
+const DEFAULT_BASE_URL = "https://useai.live/hermes";
 const DEFAULT_FALLBACK_BASE_URL = "https://cdn.jsdelivr.net/gh/fresh-claw/hermes-cn@main";
 
 function envOrDefault(name, fallback) {
